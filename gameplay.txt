@@ -1,0 +1,17 @@
+round 1
+
+player chooses bet
+
+a deck is shuffled
+dealer draws two cards
+first card is a mystery, second one is shown
+
+player draws two cards
+both are shown to player
+repeatedly given the option to hit, stand, double down, or split (if card ranks are the same)
+player either busts or stands
+
+dealer hits until >= 17 hand value
+you are paid accordingly
+
+round 2
