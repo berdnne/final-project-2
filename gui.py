@@ -1,8 +1,7 @@
 from tkinter import *
-import re
 
 import logic
-from logic import Blackjack
+from controller import Controller
 
 class Gui:
     def __init__(self, window):
@@ -50,24 +49,12 @@ class Gui:
         self.button_bet.pack(side='right', padx=5, pady=10)
         self.frame_bet.pack()
 
-        self.blackjack = Blackjack()
+        self.controller = None
 
-    def bet(self):
+    def set_controller(self, controller: Controller) -> None:
+        self.controller = controller
 
-        bet_amount = self.entry_bet.get().strip()
-        self.entry_bet.delete(0, END)
+    def bet(self) -> None:
 
-        if len(bet_amount) == 0 or re.search('[^0-9]', bet_amount):
-            self.label_action.config(text='Enter a numerical bet amount', fg='red')
-            return
-
-        bet_amount = int(bet_amount)
-        balance = logic.get_balance()
-
-        print(bet_amount)
-        print(balance)
-
-        if bet_amount > balance or bet_amount <= 0:
-            self.label_action.config(text='Enter a bet between 0 and your balance', fg='red')
-            return
-
+        if self.controller:
+            self.controller.bet(self.entry_bet.get())
