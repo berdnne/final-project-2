@@ -26,8 +26,8 @@ class Gui:
         self.frame_hands.pack()
 
         self.frame_actions_normal = Frame(self.window)
-        self.button_hit = Button(self.frame_actions_normal, text='Hit', width=12)
-        self.button_stand = Button(self.frame_actions_normal, text='Stand', width=12)
+        self.button_hit = Button(self.frame_actions_normal, text='Hit', width=12, command=self.hit)
+        self.button_stand = Button(self.frame_actions_normal, text='Stand', width=12, command=self.stand)
 
         self.button_hit.pack(side='left', padx=5, pady=10)
         self.button_stand.pack(side='right', padx=5, pady=10)
@@ -58,3 +58,42 @@ class Gui:
 
         if self.controller:
             self.controller.bet(self.entry_bet.get())
+
+    def show_dealer_cards(self, cards: list[logic.Card], hide_first: bool) -> None:
+
+        formatted_string = 'The dealer has '
+
+        for i in range(len(cards)):
+
+            if i == 0 and hide_first:
+                formatted_string += '(Mystery)'
+            else:
+                formatted_string += f'{cards[i].rank}{cards[i].suit}'
+
+            if i != len(cards) - 1:
+                formatted_string += ', '
+
+        self.label_dealer_hand.config(text=formatted_string)
+
+    def show_player_cards(self, cards: list[logic.Card]) -> None:
+
+        formatted_string = 'You have '
+
+        for i in range(len(cards)):
+
+            formatted_string += f'{cards[i].rank}{cards[i].suit}'
+
+            if i != len(cards) - 1:
+                formatted_string += ', '
+
+        self.label_player_hand.config(text=formatted_string)
+
+    def hit(self):
+
+        if self.controller:
+            self.controller.hit()
+
+    def stand(self):
+
+        if self.controller:
+            self.controller.stand()
