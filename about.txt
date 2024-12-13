@@ -5,7 +5,7 @@ Each round is as follows:
 - The dealer's first card is a mystery, but the second one is shown
 - The player draws two cards
 - Both cards are shown to player
-- The player is repeatedly given the option to hit, stand, double down, or split (if card ranks are the same)
+- The player is repeatedly given the option to hit or stand
 - The player eventually either busts or stands
 - The dealer hits until >= 17 hand value
 - The player is paid accordingly and their balance is stored in info.csv

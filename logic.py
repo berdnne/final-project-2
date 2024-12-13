@@ -5,20 +5,31 @@ import random
 class Card:
 
     def __init__(self, rank: str, suit: str):
+
+        """
+        Establishes a card object with rank and suit attributes.
+        :param rank: 2 through 10, J, Q, or K
+        :param suit: ♠,♦,♣,or ♥
+        """
+
         self.rank = rank
         self.suit = suit
 
 class Blackjack:
     def __init__(self):
 
-        self.round_active = False
-        self.player_active = False
         self.dealer_hand = []
         self.player_hand = []
         self.__deck = get_sorted_deck()
         self.player_bet = 0
 
     def bet(self, amount: str) -> None:
+
+        """
+        Stores the inputted bet and removes that amount from the player's balance.
+        :param amount: The bet in whole dollars
+        :return: None
+        """
 
         bet_amount = amount.strip()
 
@@ -36,11 +47,21 @@ class Blackjack:
 
     def draw_dealer_card(self) -> None:
 
+        """
+        Removes a random card from the deck and puts it in the dealer's hand.
+        :return: None
+        """
+
         random_index = random.randrange(len(self.__deck))
         self.dealer_hand.append(self.__deck[random_index])
         self.__deck.pop(random_index)
 
     def draw_player_card(self) -> None:
+
+        """
+        Removes a random card from the deck and puts it in the player's hand.
+        :return: None
+        """
 
         random_index = random.randrange(len(self.__deck))
         self.player_hand.append(self.__deck[random_index])
@@ -49,41 +70,38 @@ class Blackjack:
 
     def deal_starting_hands(self) -> None:
 
+        """
+        Removes a total of 4 random cards from the deck and puts them in the player's and dealer's hands (2 each).
+        :return: None
+        """
+
         for i in range(2):
             self.draw_dealer_card()
             self.draw_player_card()
 
-    def reset(self):
+    def reset(self) -> None:
 
-        self.round_active = False
-        self.player_active = False
+        """
+        Prepares another round by moving the player and dealer's cards back to the deck,
+        resetting the player's bet, and incrementing the round number.
+        :return: None
+        """
+
         self.player_hand.clear()
         self.dealer_hand.clear()
         self.__deck = get_sorted_deck()
         self.player_bet = 0
         set_round(get_round() + 1)
 
-    def push_payout(self) -> int:
+    def payout(self, multiplier: int) -> int:
 
-        payout = self.player_bet
+        """
+        Adds an amount to the player's balance based on a multiplier.
+        :param multiplier: The factor that will be applied to the player's bet and awarded
+        :return: The computed payout
+        """
 
-        set_balance(get_balance() + payout)
-        self.player_bet = 0
-
-        return payout
-
-    def normal_payout(self) -> int:
-
-        payout = 2 * self.player_bet
-
-        set_balance(get_balance() + payout)
-        self.player_bet = 0
-
-        return payout
-
-    def blackjack_payout(self) -> int:
-
-        payout = 3 * self.player_bet
+        payout = multiplier * self.player_bet
 
         set_balance(get_balance() + payout)
         self.player_bet = 0
@@ -92,15 +110,29 @@ class Blackjack:
 
 def get_balance() -> int:
 
+    """
+    :return: The player's balance as specified in info.csv
+    """
+
     with open('info.csv', 'r') as info_file:
         return int(info_file.read().split()[0])
 
 def get_round() -> int:
 
+    """
+    :return: The current round as specified in info.csv
+    """
+
     with open('info.csv', 'r') as info_file:
         return int(info_file.read().split()[1])
 
 def set_balance(balance: int) -> None:
+
+    """
+    Sets the player's balance in info.csv to the amount specified.
+    :param balance: Specified amount
+    :return: None
+    """
 
     round_num = get_round()
 
@@ -111,6 +143,12 @@ def set_balance(balance: int) -> None:
 
 def set_round(round_num: int) -> None:
 
+    """
+    Sets the round in info.csv to the amount specified.
+    :param round_num: Specified round
+    :return: None
+    """
+
     balance = get_balance()
 
     with open('info.csv', 'w') as info_file:
@@ -119,6 +157,10 @@ def set_round(round_num: int) -> None:
         content.writerow([round_num])
 
 def get_sorted_deck() -> list[Card]:
+
+    """
+    :return: A new sorted deck of 52 cards categorized by suit, then ascending rank
+    """
 
     deck = []
     ranks = ['2','3','4','5','6','7','8','9','10','J','Q','K']
@@ -132,6 +174,11 @@ def get_sorted_deck() -> list[Card]:
 
 def get_card_value(card: Card) -> int:
 
+    """
+    :param card: The card to be evaluated
+    :return: The integer value for a card based on Blackjack rules (numbered cards, face cards are 10, aces are 11)
+    """
+
     match card.rank:
         case '2'|'3'|'4'|'5'|'6'|'7'|'8'|'9'|'10':
             return int(card.rank)
@@ -143,6 +190,11 @@ def get_card_value(card: Card) -> int:
             raise ValueError('Invalid card rank')
 
 def get_hand_value(hand: list[Card]) -> int:
+
+    """
+    :param hand: List of cards
+    :return: The total value of a hand. Aces' value depends on the other cards in the hand (1 or 11)
+    """
 
     value = 0
     aces = 0
