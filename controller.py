@@ -13,7 +13,7 @@ class Controller:
         if self.model.round_active:
             return
 
-        self.view.entry_bet.delete(0, END)
+        self.view.entry_bet.delete(0, END) # clear the entry field
 
         try:
             self.model.bet(amount)
@@ -23,7 +23,7 @@ class Controller:
 
         self.play_round()
 
-    def play_round(self):
+    def play_round(self) -> None:
 
         self.view.label_money.config(text=f'${logic.get_balance()}')
 
@@ -35,7 +35,7 @@ class Controller:
         self.view.show_player_cards(self.model.player_hand)
         self.view.label_action.config(text=f'${self.model.player_bet} bet', fg='black')
 
-    def hit(self):
+    def hit(self) -> None:
 
         if not self.model.player_active:
             return
@@ -50,12 +50,10 @@ class Controller:
             self.view.show_dealer_cards(self.model.dealer_hand, False)
             self.model.reset()
 
-    def stand(self):
+    def stand(self) -> None:
 
         if not self.model.player_active:
             return
-
-
 
         self.model.player_active = False
         self.view.label_action.config(text=f'You stand, dealer has {logic.get_hand_value(self.model.dealer_hand)}', fg='black')
@@ -67,5 +65,37 @@ class Controller:
             self.model.draw_dealer_card()
             self.view.show_dealer_cards(self.model.dealer_hand, False)
 
-        if logic.get_hand_value(self.model.dealer_hand) > 21:
-            pass
+        dealer_value = logic.get_hand_value(self.model.dealer_hand)
+        player_value = logic.get_hand_value(self.model.player_hand)
+
+        round_info = f'You: {player_value}, Dealer: {dealer_value}, '
+
+        if dealer_value == player_value:
+
+            payout = self.model.push_payout()
+            round_info += f'Push! ${payout} returned.'
+
+        elif player_value == 21:
+
+            payout = self.model.blackjack_payout()
+            round_info += f'Blackjack! You win ${payout}!'
+
+        elif dealer_value > 21:
+
+            payout = self.model.normal_payout()
+            round_info += f'Dealer busts! You win ${payout}!'
+
+        elif player_value > dealer_value:
+
+            payout = self.model.normal_payout()
+            round_info += f'You win ${payout}!'
+
+        else:
+
+            self.model.player_bet = 0
+            round_info += 'Dealer wins!'
+
+        self.view.label_action.config(text=round_info, fg='black')
+        self.view.label_money.config(text=f'${logic.get_balance()}')
+        self.model.reset()
+        self.view.label_round.config(text=f'Round {logic.get_round()}')

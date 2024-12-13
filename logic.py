@@ -61,7 +61,34 @@ class Blackjack:
         self.dealer_hand.clear()
         self.__deck = get_sorted_deck()
         self.player_bet = 0
+        set_round(get_round() + 1)
 
+    def push_payout(self) -> int:
+
+        payout = self.player_bet
+
+        set_balance(get_balance() + payout)
+        self.player_bet = 0
+
+        return payout
+
+    def normal_payout(self) -> int:
+
+        payout = 2 * self.player_bet
+
+        set_balance(get_balance() + payout)
+        self.player_bet = 0
+
+        return payout
+
+    def blackjack_payout(self) -> int:
+
+        payout = 3 * self.player_bet
+
+        set_balance(get_balance() + payout)
+        self.player_bet = 0
+
+        return payout
 
 def get_balance() -> int:
 
